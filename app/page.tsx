@@ -1,7 +1,9 @@
-export const dynamic = "force-dynamic";
+'use client'
 
-import { redirect } from 'next/navigation';
+import { SignIn } from '@clerk/nextjs'
 
-export default function Home() {
-  redirect('/signin');
+export const dynamic = 'force-dynamic'
+
+export default function SignInPage() {
+  return <SignIn redirectUrl="/dashboard" />
 }
