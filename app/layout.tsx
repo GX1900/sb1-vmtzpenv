@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import {
   ClerkProvider,
   SignedIn,
+  SignedOut,
   UserButton,
 } from '@clerk/nextjs'
 import { Inter } from 'next/font/google'
