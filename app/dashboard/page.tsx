@@ -4,35 +4,28 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth, SignOutButton } from '@clerk/nextjs';
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { useAuth, UserButton } from '@clerk/nextjs'; // 👈 SignOutButton → UserButton に変更
 
 export default function Dashboard() {
   const router = useRouter();
-  const { isSignedIn } = useAuth();
+  const { isLoaded, isSignedIn } = useAuth(); // 👈 isLoaded を追加
 
   useEffect(() => {
-    if (!isSignedIn) {
+    if (isLoaded && !isSignedIn) {
       router.push('/signin');
     }
-  }, [isSignedIn, router]);
+  }, [isLoaded, isSignedIn, router]);
+
+  // 認証情報の読み込みが完了してない間は表示しない
+  if (!isLoaded) {
+    return null;
+  }
 
   return (
-    <div className="min-h-screen p-8 bg-gray-50">
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold">ダッシュボード</h1>
-            <SignOutButton signOutCallback={() => router.push('/signin')}>
-              <Button variant="outline">サインアウト</Button>
-            </SignOutButton>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <p className="text-lg text-gray-700">ログインしました</p>
-        </CardContent>
-      </Card>
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="flex justify-end">
+        <UserButton afterSignOutUrl="/signin" />
+      </div>
     </div>
   );
 }
