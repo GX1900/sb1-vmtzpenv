@@ -1,9 +1,15 @@
-import { clerkMiddleware } from '@clerk/nextjs/server';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 
-export default clerkMiddleware((auth, request) => {
-  // 未サインインかつパブリックルートでない場合は /signin にリダイレクト
-  if (!auth.userId && !auth.isPublicRoute) {
-    return Response.redirect(new URL('/signin', request.url));
+// 公開ルートを定義
+const isPublicRoute = createRouteMatcher(['/signin(.*)']);
+
+export default clerkMiddleware(async (auth, req) => {
+  const { userId } = await auth();
+
+  // 未認証ユーザーが非公開ルートにアクセスした場合、/signinにリダイレクト
+  if (!userId && !isPublicRoute(req)) {
+    return NextResponse.redirect(new URL('/signin', req.url));
   }
 });
 
