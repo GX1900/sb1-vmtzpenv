@@ -1,15 +1,10 @@
 import { clerkMiddleware } from '@clerk/nextjs/server';
 
-export default clerkMiddleware({
-  beforeAuth(request) {
-    // ここで何らかの前処理が可能（任意）
-  },
-  afterAuth(auth, request, event) {
-    // 未認証 & パブリックルート以外なら /signin にリダイレクト
-    if (!auth.userId && !auth.isPublicRoute) {
-      return Response.redirect(new URL('/signin', request.url));
-    }
-  },
+export default clerkMiddleware((auth, request) => {
+  // 未サインインかつパブリックルートでない場合は /signin にリダイレクト
+  if (!auth.userId && !auth.isPublicRoute) {
+    return Response.redirect(new URL('/signin', request.url));
+  }
 });
 
 export const config = {
